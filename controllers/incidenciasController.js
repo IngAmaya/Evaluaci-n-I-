@@ -5,7 +5,7 @@ let contadorId = 1;
 // Prioridades válidas exigidas
 const prioridadesValidas = ['Baja', 'Media', 'Alta', 'Crítica'];
 
-// 1. Registrar una nueva incidencia (POST)
+// Registrar una nueva incidencia (POST)
 const crearIncidencia = (req, res) => {
     const { titulo, descripcion, prioridad, usuario } = req.body;
 
@@ -44,12 +44,12 @@ const crearIncidencia = (req, res) => {
     });
 };
 
-// 2. Obtener todas las incidencias (GET)
+// Obtener todas las incidencias (GET)
 const obtenerIncidencias = (req, res) => {
     return res.status(200).json(incidencias);
 };
 
-// 3. Obtener una incidencia por ID (GET /:id)
+// Obtener una incidencia por ID (GET /:id)
 const obtenerIncidenciaPorId = (req, res) => {
     const idParam = parseInt(req.params.id);
 
@@ -63,7 +63,7 @@ const obtenerIncidenciaPorId = (req, res) => {
     return res.status(200).json(incidenciaEncontrada);
 };
 
-//  Cambiar el estado de una incidencia (PUT /incidencias/:id/estado)
+// Cambiar el estado de una incidencia (PUT /incidencias/:id/estado)
 const cambiarEstado = (req, res) => {
     const idParam = parseInt(req.params.id);
     const { estado } = req.body;
@@ -129,11 +129,30 @@ const eliminarIncidencia = (req, res) => {
     return res.status(200).json({ mensaje: `Incidencia con ID ${idParam} eliminada correctamente` });
 };
 
+// Obtener estadísticas de las incidencias (GET /estadisticas)
+const obtenerEstadisticas = (req, res) => {
+    // Métodos de arreglos (filter) sin variables de conteo manuales
+    const totalIncidencias = incidencias.length;
+    const pendientes = incidencias.filter(inc => inc.estado === 'Pendiente').length;
+    const enProceso = incidencias.filter(inc => inc.estado === 'En Proceso').length;
+    const resueltas = incidencias.filter(inc => inc.estado === 'Resuelta').length;
+    const canceladas = incidencias.filter(inc => inc.estado === 'Cancelada').length;
+
+    return res.status(200).json({
+        totalIncidencias,
+        pendientes,
+        enProceso,
+        resueltas,
+        canceladas
+    });
+};
+
 module.exports = {
-    incidencias,
+    incidencias, 
     crearIncidencia,
     obtenerIncidencias,
     obtenerIncidenciaPorId,
     cambiarEstado,
-    eliminarIncidencia
+    eliminarIncidencia,
+    obtenerEstadisticas
 };
