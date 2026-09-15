@@ -147,6 +147,43 @@ const obtenerEstadisticas = (req, res) => {
     });
 };
 
+// Obtener clasificación automática de la incidencia (GET /incidencias/:id/clasificacion)
+const obtenerClasificacion = (req, res) => {
+    const idParam = parseInt(req.params.id);
+
+    // Buscar incidencia por ID
+    const incidenciaEncontrada = incidencias.find(inc => inc.id === idParam);
+
+    if (!incidenciaEncontrada) {
+        return res.status(404).json({ error: `No se encontró la incidencia con el ID ${idParam}` });
+    }
+
+    let clasificacion = '';
+    const prioridadLimpia = incidenciaEncontrada.prioridad.trim().toLowerCase();
+
+    // Uso exclusivo de switch para la clasificación
+    switch (prioridadLimpia) {
+        case 'alta':
+        case 'crítica':
+        case 'critica':
+            clasificacion = 'Critica';
+            break;
+        case 'media':
+            clasificacion = 'Importante';
+            break;
+        case 'baja':
+            clasificacion = 'Normal';
+            break;
+        default:
+            clasificacion = 'No definida';
+    }
+
+    return res.status(200).json({
+        id: incidenciaEncontrada.id,
+        clasificacion
+    });
+};
+
 module.exports = {
     incidencias, 
     crearIncidencia,
@@ -154,5 +191,6 @@ module.exports = {
     obtenerIncidenciaPorId,
     cambiarEstado,
     eliminarIncidencia,
-    obtenerEstadisticas
+    obtenerEstadisticas,
+    obtenerClasificacion
 };
