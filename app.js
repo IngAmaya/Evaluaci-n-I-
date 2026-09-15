@@ -16,7 +16,7 @@ app.use('/incidencias', incidenciasRoutes);
 
 // Ruta raíz de prueba
 app.get('/', (req, res) => {
-    res.json({ mensaje: "API REST de Soporte Técnico UCA funcionando correctamente" });
+    res.json({ mensaje: "API REST de Soporte Técnico funcionando correctamente" });
 });
 
 app.listen(PORT, () => {
