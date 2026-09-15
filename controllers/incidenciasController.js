@@ -63,7 +63,7 @@ const obtenerIncidenciaPorId = (req, res) => {
     return res.status(200).json(incidenciaEncontrada);
 };
 
-// Cambiar el estado de una incidencia 
+//  Cambiar el estado de una incidencia (PUT /incidencias/:id/estado)
 const cambiarEstado = (req, res) => {
     const idParam = parseInt(req.params.id);
     const { estado } = req.body;
@@ -83,7 +83,7 @@ const cambiarEstado = (req, res) => {
     const estadoLimpio = estado.trim().toLowerCase();
     let nuevoEstado = '';
 
-    // REQUISITO OBLIGATORIO: Uso de switch para validar y asignar los estados permitidos
+    // Uso de switch para validar y asignar los estados permitidos
     switch (estadoLimpio) {
         case 'pendiente':
             nuevoEstado = 'Pendiente';
@@ -112,9 +112,28 @@ const cambiarEstado = (req, res) => {
     });
 };
 
+// Eliminar una incidencia por ID (DELETE /incidencias/:id)
+const eliminarIncidencia = (req, res) => {
+    const idParam = parseInt(req.params.id);
+
+    // Uso de findIndex() para obtener el índice
+    const indiceEncontrado = incidencias.findIndex(inc => inc.id === idParam);
+
+    if (indiceEncontrado === -1) {
+        return res.status(404).json({ error: `No se encontró la incidencia con el ID ${idParam}` });
+    }
+
+    // Uso de splice() para remover la incidencia del arreglo
+    incidencias.splice(indiceEncontrado, 1);
+
+    return res.status(200).json({ mensaje: `Incidencia con ID ${idParam} eliminada correctamente` });
+};
+
 module.exports = {
-    incidencias, // Se exporta por si tu compañero la necesita en sus controladores
+    incidencias,
     crearIncidencia,
     obtenerIncidencias,
-    obtenerIncidenciaPorId
+    obtenerIncidenciaPorId,
+    cambiarEstado,
+    eliminarIncidencia
 };
