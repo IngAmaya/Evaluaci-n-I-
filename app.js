@@ -2,18 +2,23 @@ const express = require('express');
 const app = express();
 const PORT = 3124;
 
-// Middleware obligatorio para que Express pueda leer datos JSON en las peticiones
+// Importar rutas de incidencias
+const incidenciasRoutes = require('./routes/incidencias');
+
+// Middleware para leer JSON
 app.use(express.json());
 
-// Arreglo en memoria para almacenar las incidencias 
+// Arreglo en memoria global para las incidencias
 const incidencias = [];
 
-// Ruta de prueba inicial para verificar que el servidor está activo
+// Usar las rutas
+app.use('/incidencias', incidenciasRoutes);
+
+// Ruta raíz de prueba
 app.get('/', (req, res) => {
-    res.json({ mensaje: "API REST de Soporte Técnico funcionando correctamente" });
+    res.json({ mensaje: "API REST de Soporte Técnico UCA funcionando correctamente" });
 });
 
-// Iniciar el servidor en el puerto 3124
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
