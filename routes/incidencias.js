@@ -23,17 +23,17 @@ router.post('/', crearIncidencia);
 // Obtener estadísticas globales (Se coloca ANTES de :id para evitar conflictos de parámetros)
 router.get('/estadisticas', obtenerEstadisticas);
 
-// --- Endpoints con Parámetros de Ruta (:id) ---
-// Consultar una incidencia específica por su ID[cite: 1]
+// Endpoints con Parámetros de Ruta (:id) 
+// Consultar una incidencia específica por su ID
 router.get('/:id', obtenerIncidenciaPorId);
 
-// Actualizar el estado de una incidencia puntual[cite: 1]
+// Actualizar el estado de una incidencia puntual
 router.put('/:id/estado', cambiarEstado);
 
-// Eliminar un registro de incidencia por su ID[cite: 1]
+// Eliminar un registro de incidencia por su ID
 router.delete('/:id', eliminarIncidencia);
 
-// Obtener la clasificación calculada de una incidencia[cite: 1]
+// Obtener la clasificación calculada de una incidencia
 router.get('/:id/clasificacion', obtenerClasificacion);
 
 // Exportamos el enrutador para ser registrado en app.js
