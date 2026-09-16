@@ -1,29 +1,40 @@
-// Importamos el marco de trabajo Express para manejar el enrutamiento
+// Importamos Express y creamos la instancia del Router para la gestión modular de rutas (Patrón MVC)
 const express = require('express');
-
-// Creamos una instancia de Router para gestionar las rutas de manera modular (Patrón MVC)
 const router = express.Router();
 
-// Importamos las funciones controladoras desde nuestro archivo de controladores
-// Cada función contiene la lógica de negocio para responder a las diferentes peticiones HTTP
+// Importamos los controladores desde la capa correspondiente
 const { 
     obtenerIncidencias, 
     crearIncidencia, 
-    obtenerIncidenciaPorId 
+    obtenerIncidenciaPorId,
+    cambiarEstado,
+    eliminarIncidencia,
+    obtenerEstadisticas,
+    obtenerClasificacion
 } = require('../controllers/incidenciasController');
 
-// 1. Ruta para obtener el listado completo de incidencias (Endpoint 2)
-// Método: GET -> Devuelve un JSON con todas las incidencias registradas
+// --- Endpoints Generales (Rutas fijas y de creación) ---
+// Obtener el listado completo de incidencias registradas
 router.get('/', obtenerIncidencias);
 
-// 2. Ruta para registrar una nueva incidencia (Endpoint 1)
-// Método: POST -> Recibe datos en el body de la petición, valida y guarda la nueva incidencia
+// Registrar una nueva incidencia mediante el body de la petición
 router.post('/', crearIncidencia);
 
-// 3. Ruta para buscar una incidencia específica por su ID (Endpoint 3)
-// Método: GET -> Utiliza un parámetro de ruta (:id) para localizar y retornar un elemento individual
+// Obtener estadísticas globales (Se coloca ANTES de :id para evitar conflictos de parámetros)
+router.get('/estadisticas', obtenerEstadisticas);
+
+// --- Endpoints con Parámetros de Ruta (:id) ---
+// Consultar una incidencia específica por su ID[cite: 1]
 router.get('/:id', obtenerIncidenciaPorId);
 
+// Actualizar el estado de una incidencia puntual[cite: 1]
+router.put('/:id/estado', cambiarEstado);
 
-// Exportamos el enrutador configurado para que pueda ser utilizado en app.js
+// Eliminar un registro de incidencia por su ID[cite: 1]
+router.delete('/:id', eliminarIncidencia);
+
+// Obtener la clasificación calculada de una incidencia[cite: 1]
+router.get('/:id/clasificacion', obtenerClasificacion);
+
+// Exportamos el enrutador para ser registrado en app.js
 module.exports = router;
