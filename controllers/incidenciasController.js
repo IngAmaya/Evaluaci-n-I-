@@ -1,3 +1,6 @@
+// Importar los helpers desde la carpeta utils
+const { esTextoVacio, respuestaError } = require('../utils/helpers');
+
 // Arreglo en memoria para almacenar las incidencias
 const incidencias = [];
 let contadorId = 1;
@@ -9,20 +12,14 @@ const prioridadesValidas = ['Baja', 'Media', 'Alta', 'Crítica'];
 const crearIncidencia = (req, res) => {
     const { titulo, descripcion, prioridad, usuario } = req.body;
 
-    // Validación de campos obligatorios y que no sean cadenas vacías
-    if (!titulo || !descripcion || !prioridad || !usuario ||
-        titulo.trim() === '' || descripcion.trim() === '' || 
-        prioridad.trim() === '' || usuario.trim() === '') {
-        return res.status(400).json({ 
-            error: "Todos los campos (titulo, descripcion, prioridad, usuario) son obligatorios y no deben estar vacíos." 
-        });
+    // Validación de campos obligatorios usando helper esTextoVacio
+    if (esTextoVacio(titulo) || esTextoVacio(descripcion) || esTextoVacio(prioridad) || esTextoVacio(usuario)) {
+        return respuestaError(res, 400, "Todos los campos (titulo, descripcion, prioridad, usuario) son obligatorios y no deben estar vacíos.");
     }
 
     // Validación de prioridad permitida
-    if (!prioridadesValidas.includes(prioridad)) {
-        return res.status(400).json({ 
-            error: `La prioridad ingresada no es válida. Valores permitidos: ${prioridadesValidas.join(', ')}` 
-        });
+    if (!prioridadesValidas.includes(prioridad.trim())) {
+        return respuestaError(res, 400, `La prioridad ingresada no es válida. Valores permitidos: ${prioridadesValidas.join(', ')}`);
     }
 
     // Crear el objeto de la incidencia
@@ -57,7 +54,7 @@ const obtenerIncidenciaPorId = (req, res) => {
     const incidenciaEncontrada = incidencias.find(inc => inc.id === idParam);
 
     if (!incidenciaEncontrada) {
-        return res.status(404).json({ error: `No se encontró ninguna incidencia con el ID ${idParam}` });
+        return respuestaError(res, 404, `No se encontró ninguna incidencia con el ID ${idParam}`);
     }
 
     return res.status(200).json(incidenciaEncontrada);
@@ -68,16 +65,16 @@ const cambiarEstado = (req, res) => {
     const idParam = parseInt(req.params.id);
     const { estado } = req.body;
 
-    // Validación de entrada para el estado
-    if (!estado || typeof estado !== 'string' || estado.trim() === '') {
-        return res.status(400).json({ error: "El campo 'estado' es obligatorio." });
+    // Validación de entrada para el estado usando helper esTextoVacio
+    if (esTextoVacio(estado)) {
+        return respuestaError(res, 400, "El campo 'estado' es obligatorio.");
     }
 
     // Buscar incidencia por ID usando find()
     const incidenciaEncontrada = incidencias.find(inc => inc.id === idParam);
 
     if (!incidenciaEncontrada) {
-        return res.status(404).json({ error: `No se encontró la incidencia con el ID ${idParam}` });
+        return respuestaError(res, 404, `No se encontró la incidencia con el ID ${idParam}`);
     }
 
     const estadoLimpio = estado.trim().toLowerCase();
@@ -98,9 +95,7 @@ const cambiarEstado = (req, res) => {
             nuevoEstado = 'Cancelada';
             break;
         default:
-            return res.status(400).json({ 
-                error: "Estado no válido. Los estados permitidos son: 'Pendiente', 'En Proceso', 'Resuelta', 'Cancelada'." 
-            });
+            return respuestaError(res, 400, "Estado no válido. Los estados permitidos son: 'Pendiente', 'En Proceso', 'Resuelta', 'Cancelada'.");
     }
 
     // Asignar el nuevo estado
@@ -120,7 +115,7 @@ const eliminarIncidencia = (req, res) => {
     const indiceEncontrado = incidencias.findIndex(inc => inc.id === idParam);
 
     if (indiceEncontrado === -1) {
-        return res.status(404).json({ error: `No se encontró la incidencia con el ID ${idParam}` });
+        return respuestaError(res, 404, `No se encontró la incidencia con el ID ${idParam}`);
     }
 
     // Uso de splice() para remover la incidencia del arreglo
@@ -155,7 +150,7 @@ const obtenerClasificacion = (req, res) => {
     const incidenciaEncontrada = incidencias.find(inc => inc.id === idParam);
 
     if (!incidenciaEncontrada) {
-        return res.status(404).json({ error: `No se encontró la incidencia con el ID ${idParam}` });
+        return respuestaError(res, 404, `No se encontró la incidencia con el ID ${idParam}`);
     }
 
     let clasificacion = '';
